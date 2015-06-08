@@ -9,6 +9,7 @@ import json
 import warnings
 from collections import defaultdict
 from pytz import UTC
+from pprint import pprint
 from ipware.ip import get_ip
 
 from django.conf import settings
@@ -948,10 +949,12 @@ def login_user(request, error=""):  # pylint: disable-msg=too-many-statements,un
     redirect_url = None
     response = None
     running_pipeline = None
-    third_party_auth_requested = third_party_auth.is_enabled() and pipeline.running(request)
+    third_party_auth_requested = third_party_auth.is_enabled() and pipeline.running(request) and False
     third_party_auth_successful = False
     trumped_by_first_party_auth = bool(request.POST.get('email')) or bool(request.POST.get('password'))
     user = None
+    pprint(user)
+    pprint(request.POST.get('email'))
 
     if third_party_auth_requested and not trumped_by_first_party_auth:
         # The user has already authenticated via third-party auth and has not
@@ -1045,7 +1048,7 @@ def login_user(request, error=""):  # pylint: disable-msg=too-many-statements,un
 
     if not third_party_auth_successful:
         try:
-            user = authenticate(username=username, password=password, request=request)
+            user = authenticate(username=request.POST.get('email'), password=password, request=request)
         # this occurs when there are too many attempts from the same IP address
         except RateLimitException:
             return JsonResponse({

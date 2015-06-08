@@ -33,6 +33,8 @@ import imp
 import os
 import sys
 import lms.envs.common
+import ldap
+
 # Although this module itself may not use these imported variables, other dependent modules may.
 from lms.envs.common import (
     USE_TZ, TECH_SUPPORT_EMAIL, PLATFORM_NAME, BUGS_EMAIL, DOC_STORE_CONFIG, DATA_DIR, ALL_LANGUAGES, WIKI_ENABLED,
@@ -215,8 +217,19 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'contentstore.context_processors.doc_url',
 )
 
+# LDAP CONF
+AUTH_LDAP_SERVER_URI = "ldap://hogeschool-wvl.be"
+AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
+AUTH_LDAP_USER_DN_TEMPLATE = '%(user)s'
+
+# AUTH_LDAP_CONNECTION_OPTIONS = {
+#   ldap.OPT_REFERRALS: 0,
+#   ldap.OPT_PROTOCOL_VERSION: 3
+# }
+
 # use the ratelimit backend to prevent brute force attacks
 AUTHENTICATION_BACKENDS = (
+    'django_auth_ldap.backend.LDAPBackend',
     'ratelimitbackend.backends.RateLimitModelBackend',
 )
 

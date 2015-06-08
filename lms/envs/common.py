@@ -41,6 +41,7 @@ from .discussionsettings import *
 import dealer.git
 from xmodule.modulestore.modulestore_settings import update_module_store_settings
 from lms.djangoapps.lms_xblock.mixin import LmsBlockMixin
+import ldap
 
 ################################### FEATURES ###################################
 # The display name of the platform to be used in templates/emails/etc.
@@ -508,10 +509,32 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'edxmako.shortcuts.microsite_footer_context_processor',
 )
 
+# LDAP CONF
+AUTH_LDAP_SERVER_URI = "LDAP://172.20.0.8:389"
+AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
+# AUTH_LDAP_USER_DN_TEMPLATE = '%(user)s'
+AUTH_LDAP_USER_DN_TEMPLATE = 'mail=%(user)s,OU=MCT NMCT,OU=Studenten,OU=Howest,DC=hogeschool-wvl,DC=be'
+
+AUTH_LDAP_USER_ATTR_MAP = {
+    "first_name": "givenName",
+    "last_name": "sn",
+    "email": "mail",
+}
+# AUTH_LDAP_PROFILE_ATTR_MAP = {"home_directory": "homeDirectory"}
+
+AUTH_LDAP_CONNECTION_OPTIONS = {
+    ldap.OPT_DEBUG_LEVEL: 1,
+    ldap.OPT_REFERRALS: 0,
+    ldap.OPT_PROTOCOL_VERSION: 3
+}
+
 # use the ratelimit backend to prevent brute force attacks
 AUTHENTICATION_BACKENDS = (
+    # 'django_auth_ldap.backend.LDAPBackend',
+    'student.models.LDAPHowestBackend',
     'ratelimitbackend.backends.RateLimitModelBackend',
 )
+
 STUDENT_FILEUPLOAD_MAX_SIZE = 4 * 1000 * 1000  # 4 MB
 MAX_FILEUPLOADS_PER_INPUT = 20
 
