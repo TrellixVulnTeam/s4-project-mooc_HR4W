@@ -513,7 +513,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 AUTH_LDAP_SERVER_URI = "LDAP://172.20.0.8:389"
 AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
 # AUTH_LDAP_USER_DN_TEMPLATE = '%(user)s'
-AUTH_LDAP_USER_DN_TEMPLATE = 'mail=%(user)s,OU=MCT NMCT,OU=Studenten,OU=Howest,DC=hogeschool-wvl,DC=be'
+AUTH_LDAP_USER_DN_TEMPLATE = 'cn=%(user)s,OU=MCT NMCT,OU=Studenten,OU=Howest,DC=hogeschool-wvl,DC=be'
 
 AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": "givenName",

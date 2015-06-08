@@ -1690,7 +1690,8 @@ from django_auth_ldap.backend import LDAPBackend
 
 class LDAPHowestBackend(LDAPBackend):
     def ldap_to_django_username(self, username):
-        return username.replace('.', '').split('@')[0][:30]
+        # return username.replace('.', '').split('@')[0][:30]
+        return username.split('@')[0][:30]
 
     def django_to_ldap_username(self, username):
         return username
