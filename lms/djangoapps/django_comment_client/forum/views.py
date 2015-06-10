@@ -14,7 +14,6 @@ from django.contrib.auth.models import User
 from django.http import Http404, HttpResponseBadRequest
 from django.views.decorators.http import require_GET
 import newrelic.agent
-from pprint import pprint
 
 from edxmako.shortcuts import render_to_response
 from courseware.courses import get_course_with_access
@@ -222,9 +221,6 @@ def forum_form_discussion(request, course_key):
         'category_map': course_settings["category_map"],
         'course_settings': _attr_safe_json(course_settings)
     }
-
-    pprint(context['course'].id, width=1)
-
     return render_to_response('discussion/disqus.html', context)
 
 
