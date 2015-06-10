@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from django.http import Http404, HttpResponseBadRequest
 from django.views.decorators.http import require_GET
 import newrelic.agent
+from pprint import pprint
 
 from edxmako.shortcuts import render_to_response
 from courseware.courses import get_course_with_access
@@ -202,6 +203,33 @@ def inline_discussion(request, course_key, discussion_id):
 @login_required
 @use_bulk_ops
 def forum_form_discussion(request, course_key):
+    # disqus replacement
+
+    course = get_course_with_access(request.user, 'load_forum', course_key, check_if_enrolled=True)
+    course_settings = make_course_settings(course, request.user)
+
+    context = {
+        'csrf': csrf(request)['csrf_token'],
+        'course': course,
+        #'recent_active_threads': recent_active_threads,
+        'staff_access': has_access(request.user, 'staff', course),
+        'flag_moderator': cached_has_permission(request.user, 'openclose_thread', course.id) or has_access(request.user, 'staff', course),
+        'course_id': course.id.to_deprecated_string(),
+        'roles': _attr_safe_json(utils.get_role_ids(course_key)),
+        'is_moderator': cached_has_permission(request.user, "see_all_cohorts", course_key),
+        'cohorts': course_settings["cohorts"],  # still needed to render _thread_list_template
+        'is_course_cohorted': is_course_cohorted(course_key),  # still needed to render _thread_list_template
+        'category_map': course_settings["category_map"],
+        'course_settings': _attr_safe_json(course_settings)
+    }
+
+    pprint(context['course'].id, width=1)
+
+    return render_to_response('discussion/disqus.html', context)
+
+
+
+
     """
     Renders the main Discussion page, potentially filtered by a search query
     """
